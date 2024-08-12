@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order History</title>
+<body>
+    <%- include('../partials/header') %>
+
+    <div class="container mt-5">
+        <h1 class="text-center"><i class="fas fa-history"></i> Order History</h1>
+
+        <div class="table-responsive table-container">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Order ID <i class="fas fa-id-card"></i></th>
+                        <th>Date <i class="fas fa-calendar-alt"></i></th>
+                        <th>Status <i class="fas fa-clipboard-check"></i></th>
+                        <th>Total Amount <i class="fas fa-dollar-sign"></i></th>
+                        <th>Total Reward Points <i class="fas fa-star"></i></th>
+                        <th>Payment Option <i class="fas fa-credit-card"></i></th>
+                        <th>Payment Status <i class="fas fa-check-circle"></i></th>
+                        <th>Items <i class="fas fa-box"></i></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (orders.length > 0) { %>
+                        <% orders.forEach(order => { %>
+                        <tr>
+                            <td><%= order._id %></td>
+                            <td><%= order.createdAt.toLocaleDateString() %></td>
+                            <td><%= order.status %></td>
+                            <td>$<%= order.totalAmount %></td>
+                            <td><%= order.totalRewardPoints %></td>
+                            <td><%= order.paymentOption %></td>
+                            <td><%= order.paymentStatus %></td>
+                            <td>
+                                <ul>
+                                    <% order.items.forEach(orderItem => { %>
+                                        <% if (orderItem.item) { %> <!-- Check if item is not null -->
+                                        <li><%= orderItem.quantity %> x <%= orderItem.item.name %></li>
+                                        <% } else { %>
+                                        <li><%= orderItem.quantity %> x [Item Deleted]</li> <!-- Fallback message -->
+                                        <% } %>
+                                    <% }) %>
+                                </ul>
+                            </td>
+                        </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="8">No orders found.</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Items</title>
+  </head>
+  <body>
+    <%- include('../partials/header') %>
+
+    <div class="container mt-5">
+      <h1 class="text-center"><i class="fas fa-boxes"></i> Items</h1>
+
+      <form action="/user/items/viewBill" method="POST">
+        <div class="table-responsive table-container">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Select <i class="fas fa-check-square"></i></th>
+                <!-- Column for selecting items -->
+                <th>Item Name <i class="fas fa-tag"></i></th>
+                <th>Description <i class="fas fa-info-circle"></i></th>
+                <th>Category <i class="fas fa-list-alt"></i></th>
+                <th>Quantity <i class="fas fa-sort-numeric-up"></i></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% items.forEach(item => { %>
+              <tr>
+                <td>
+                  <input
+                    type="checkbox"
+                    name="items[<%= item._id %>][selected]"
+                    value="true"
+                    class="form-check-input"
+                  />
+                </td>
+                <td><%= item.name %></td>
+                <td><%= item.description %></td>
+                <td>
+                  <select
+                    name="items[<%= item._id %>][categoryId]"
+                    class="form-select"
+                  >
+                    <% item.categories.forEach(category => { %>
+                    <option value="<%= category._id %>">
+                      <%= category.category %> - Rs.<%= category.price %>
+                    </option>
+                    <% }) %>
+                  </select>
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    name="items[<%= item._id %>][quantity]"
+                    value="1"
+                    min="1"
+                    class="form-control"
+                  />
+                  <input
+                    type="hidden"
+                    name="items[<%= item._id %>][itemId]"
+                    value="<%= item._id %>"
+                  />
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+        <div class="text-end">
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-receipt"></i> View Bill
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <%- include('../partials/footer') %>
+  </body>
+</html>

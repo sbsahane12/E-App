@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Items</title>
+  </head>
+  <body>
+    <%- include('../partials/header') %>
+
+    <div class="container mt-5">
+      <h1 class="text-center"><i class="fas fa-box"></i> Manage Items</h1>
+
+      <div class="text-end my-4">
+        <button
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#createItemModal"
+        >
+          <i class="fas fa-plus"></i> Create Item
+        </button>
+      </div>
+
+      <!-- Search Input -->
+      <div class="mb-3">
+        <input
+          type="text"
+          id="searchInput"
+          class="form-control"
+          placeholder="Search items by name"
+        />
+      </div>
+
+      <div class="table-responsive table-container">
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th>Item Name</th>
+              <th>Description</th>
+              <th>Categories</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="itemTableBody">
+            <% items.forEach(item => { %>
+            <tr>
+              <td><%= item.name %></td>
+              <td><%= item.description %></td>
+              <td>
+                <ul class="list-unstyled">
+                  <% item.categories.forEach(category => { %>
+                  <li>
+                    <%= category.category %> - Rs.<%= category.price %> - <%=
+                    category.reward %> pts
+                  </li>
+                  <% }) %>
+                </ul>
+              </td>
+              <td>
+                <button
+                  class="btn btn-warning"
+                  data-bs-toggle="modal"
+                  data-bs-target="#updateItemModal-<%= item._id %>"
+                >
+                  <i class="fas fa-edit"></i> Update
+                </button>
+                <button
+                  class="btn btn-danger"
+                  data-bs-toggle="modal"
+                  data-bs-target="#deleteItemModal-<%= item._id %>"
+                >
+                  <i class="fas fa-trash"></i> Delete
+                </button>
+              </td>
+            </tr>
+
+            <!-- Update Item Modal -->
+            <div
+              class="modal fade"
+              id="updateItemModal-<%= item._id %>"
+              tabindex="-1"
+              aria-labelledby="updateItemModalLabel-<%= item._id %>"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5
+                      class="modal-title"
+                      id="updateItemModalLabel-<%= item._id %>"
+                    >
+                      <i class="fas fa-edit"></i> Update Item
+                    </h5>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <form
+                    action="/admin/items/<%= item._id %>/update"
+                    method="POST"
+                  >
+                    <div class="modal-body">
+                      <div class="mb-3">
+                        <label for="name-<%= item._id %>" class="form-label"
+                          >Item Name</label
+                        >
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="name-<%= item._id %>"
+                          name="name"
+                          value="<%= item.name %>"
+                          required
+                        />
+                      </div>
+                      <div class="mb-3">
+                        <label
+                          for="description-<%= item._id %>"
+                          class="form-label"
+                          >Description</label
+                        >
+                        <textarea
+                          class="form-control"
+                          id="description-<%= item._id %>"
+                          name="description"
+                          required
+                        >
+<%= item.description %></textarea
+                        >
+                      </div>
+                      <div class="mb-3">
+                        <label
+                          for="categories-<%= item._id %>"
+                          class="form-label"
+                          >Categories and Prices</label
+                        >
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="categories-<%= item._id %>"
+                          name="categories"
+                          value="<%= item.categories.map(c => c.category + '-' + c.price + '-' + c.reward).join(', ') %>"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                      >
+                        Close
+                      </button>
+                      <button type="submit" class="btn btn-primary">
+                        Update Item
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Delete Item Modal -->
+            <div
+              class="modal fade"
+              id="deleteItemModal-<%= item._id %>"
+              tabindex="-1"
+              aria-labelledby="deleteItemModalLabel-<%= item._id %>"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5
+                      class="modal-title"
+                      id="deleteItemModalLabel-<%= item._id %>"
+                    >
+                      <i class="fas fa-trash"></i> Delete Item
+                    </h5>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <div class="modal-body">
+                    <p>
+                      Are you sure you want to delete the item "<%= item.name
+                      %>"?
+                    </p>
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-bs-dismiss="modal"
+                    >
+                      Cancel
+                    </button>
+                    <form
+                      action="/admin/items/<%= item._id %>/delete"
+                      method="POST"
+                      class="d-inline"
+                    >
+                      <button type="submit" class="btn btn-danger">
+                        Delete Item
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Create Item Modal -->
+    <div
+      class="modal fade"
+      id="createItemModal"
+      tabindex="-1"
+      aria-labelledby="createItemModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="createItemModalLabel">
+              <i class="fas fa-plus"></i> Create Item
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <form action="/admin/items/create" method="POST">
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="name" class="form-label">Item Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="name"
+                  name="name"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea
+                  class="form-control"
+                  id="description"
+                  name="description"
+                  required
+                ></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="categories" class="form-label"
+                  >Categories and Prices</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="categories"
+                  name="categories"
+                  placeholder="Example: Small-5-10, Medium-10-20"
+                  required
+                />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+              <button type="submit" class="btn btn-primary">Create Item</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

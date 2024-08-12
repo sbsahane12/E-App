@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+  </head>
+  <body>
+    <%- include('../partials/header') %>
+
+    <div class="container text-center">
+        <H1>Welcome, <%=user.name%></H1>
+      <div class="row">
+        <!-- Card for View Items -->
+        <div class="col-md-3 mb-4">
+          <div class="card">
+            <div class="card-body text-center">
+              <i class="fas fa-box card-icon"></i>
+              <h5 class="card-title">View Items</h5>
+              <a href="/user/items" class="btn btn-primary">Go to Items</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card for Order History -->
+        <div class="col-md-3 mb-4">
+          <div class="card">
+            <div class="card-body text-center">
+              <i class="fas fa-history card-icon"></i>
+              <h5 class="card-title">Order History</h5>
+              <a href="/user/orderHistory" class="btn btn-primary"
+                >View Orders</a
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Card for Reward Coins -->
+        <div class="col-md-3 mb-4">
+          <div class="card">
+            <div class="card-body text-center">
+              <i class="fas fa-star card-icon"></i>
+              <h5 class="card-title">Reward Coins</h5>
+              <a href="/user/rewardPoints" class="btn btn-primary"
+                >Check Rewards</a
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Card for Logout -->
+        <div class="col-md-3 mb-4">
+          <div class="card">
+            <div class="card-body text-center">
+              <i class="fas fa-sign-out-alt card-icon"></i>
+              <h5 class="card-title">Logout</h5>
+              <a href="/logout" class="btn btn-primary">Logout</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+  </body>
+</html>

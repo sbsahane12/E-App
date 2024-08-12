@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <style>
+      h1 {
+        margin-top: 20px;
+        color: #343a40;
+      }
+
+      .btn-custom {
+        border-radius: 5px;
+        transition: background-color 0.3s, box-shadow 0.3s;
+      }
+
+      .btn-custom:hover {
+        background-color: #0056b3;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .modal-content {
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .modal-header {
+        background-color: #007bff;
+        color: white;
+      }
+
+      .modal-footer {
+        background-color: #f1f1f1;
+      }
+
+      .table-responsive {
+        margin-top: 20px;
+      }
+
+      table {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      table thead {
+        background-color: #007bff;
+        color: white;
+      }
+
+      table th,
+      table td {
+        vertical-align: middle;
+        padding: 10px;
+      }
+
+      table tbody tr:hover {
+        background-color: #f1f1f1;
+      }
+    </style>
+  </head>
+  <body>
+    <%- include('../partials/header') %>
+    <div class="container mt-5">
+      <h1 class="text-center">
+        <i class="fas fa-tachometer-alt"></i> Admin Dashboard
+      </h1>
+
+      <!-- Buttons to trigger modals -->
+      <div class="text-end mb-3">
+        <button
+          class="btn btn-primary btn-custom"
+          data-bs-toggle="modal"
+          data-bs-target="#todayOrdersModal"
+        >
+          <i class="fas fa-calendar-day"></i> Today's Orders
+        </button>
+        <button
+          class="btn btn-secondary btn-custom"
+          data-bs-toggle="modal"
+          data-bs-target="#last7DaysOrdersModal"
+        >
+          <i class="fas fa-calendar-week"></i> View Last 7 Days Orders
+        </button>
+      </div>
+
+      <!-- Search Input -->
+      <div class="mb-3">
+        <input
+          type="text"
+          id="searchInput"
+          class="form-control"
+          placeholder="Search users by username"
+        />
+      </div>
+
+      <!-- Users Table -->
+      <h2><i class="fas fa-users"></i> Users</h2>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+          <thead class="table-dark">
+            <tr>
+              <th>Username <i class="fas fa-user"></i></th>
+              <th>Email <i class="fas fa-envelope"></i></th>
+              <th>Actions <i class="fas fa-cogs"></i></th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody">
+            <% users.forEach(user => { %>
+            <tr>
+              <td><%= user.name %></td>
+              <td><%= user.email %></td>
+              <td>
+                <a
+                  class="btn btn-info btn-sm btn-custom"
+                  href="/admin/orders/<%= user._id %>"
+                  ><i class="fas fa-eye"></i> View All Orders History</a
+                >
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Modal for Today's Orders -->
+    <div
+      class="modal fade"
+      id="todayOrdersModal"
+      tabindex="-1"
+      aria-labelledby="todayOrdersModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="todayOrdersModalLabel">
+              <i class="fas fa-calendar-day"></i> Today's Orders
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div id="todayOrdersContent" class="table-responsive">
+              <!-- Today's Orders will be loaded here -->
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for Last 7 Days Orders -->
+    <div
+      class="modal fade"
+      id="last7DaysOrdersModal"
+      tabindex="-1"
+      aria-labelledby="last7DaysOrdersModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="last7DaysOrdersModalLabel">
+              <i class="fas fa-calendar-week"></i> Last 7 Days Orders
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div id="last7DaysOrdersContent" class="table-responsive">
+              <!-- Last 7 Days Orders will be loaded here -->
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

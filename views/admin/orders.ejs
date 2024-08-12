@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+
+    <style>
+        h1 {
+            margin-top: 20px;
+            color: #343a40;
+        }
+
+        .btn-custom {
+            border-radius: 5px;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-custom:hover {
+            background-color: #0056b3;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-content {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .modal-footer {
+            background-color: #f1f1f1;
+        }
+
+        .table-responsive {
+            margin-top: 20px;
+        }
+
+        table {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table thead {
+            background-color: #007bff;
+            color: white;
+        }
+
+        table th, table td {
+            vertical-align: middle;
+            padding: 10px;
+        }
+
+        table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .list-group-item {
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <div class="container mt-5">
+        <h1 class="text-center"><i class="fas fa-box"></i> Order Details</h1>
+
+        <!-- Button to View Total Reward Points -->
+        <div class="text-end my-4">
+            <button class="btn btn-info btn-custom" data-bs-toggle="modal" data-bs-target="#viewRewardModal"><i class="fas fa-star"></i> View Reward</button>
+        </div>
+
+        <!-- Search Input -->
+        <div class="mb-3">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search orders by Order ID">
+        </div>
+
+        <!-- Order Details Table -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Order ID <i class="fas fa-id-badge"></i></th>
+                        <th>Date <i class="fas fa-calendar-day"></i></th>
+                        <th>Status <i class="fas fa-info-circle"></i></th>
+                        <th>Total Amount <i class="fas fa-dollar-sign"></i></th>
+                        <th>Total Reward Points <i class="fas fa-gift"></i></th>
+                        <th>Payment Option <i class="fas fa-credit-card"></i></th>
+                        <th>Payment Status <i class="fas fa-check-circle"></i></th>
+                        <th>Items <i class="fas fa-boxes"></i></th>
+                        <th>Actions <i class="fas fa-cogs"></i></th>
+                    </tr>
+                </thead>
+                <tbody id="orderTableBody">
+                    <% orders.forEach(order => { %>
+                    <tr>
+                        <td><%= order._id %></td>
+                        <td><%= order.createdAt.toLocaleDateString() %></td>
+                        <td><%= order.status %></td>
+                        <td>$<%= order.totalAmount %></td>
+                        <td><%= order.totalRewardPoints %></td>
+                        <td><%= order.paymentOption %></td>
+                        <td><%= order.paymentStatus %></td>
+                        <td>
+                            <button class="btn btn-secondary btn-custom" data-bs-toggle="modal" data-bs-target="#viewItemsModal-<%= order._id %>"><i class="fas fa-eye"></i> View Items</button>
+                        </td>
+                        <td>
+                            <button class="btn btn-warning btn-custom" data-bs-toggle="modal" data-bs-target="#updateOrderStatusModal-<%= order._id %>"><i class="fas fa-edit"></i> Update Order Status</button>
+                            <button class="btn btn-success btn-custom" data-bs-toggle="modal" data-bs-target="#updatePaymentStatusModal-<%= order._id %>"><i class="fas fa-credit-card"></i> Update Payment Status</button>
+                        </td>
+                    </tr>
+
+                    <!-- View Items Modal -->
+                    <div class="modal fade" id="viewItemsModal-<%= order._id %>" tabindex="-1" aria-labelledby="viewItemsModalLabel-<%= order._id %>" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="viewItemsModalLabel-<%= order._id %>">Items in Order <%= order._id %></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <ul class="list-group">
+                                        <% order.items.forEach(orderItem => { %>
+                                        <% if (orderItem.item) { %>
+                                        <li class="list-group-item">
+                                            <%= orderItem.quantity %> x <%= orderItem.item.name %> ($<%= orderItem.price %>) -
+                                            Category: <%= orderItem.item.categories.find(cat => cat._id.toString() === orderItem.categoryId)?.category || 'Category Deleted' %>
+                                        </li>
+                                        <% } else { %>
+                                        <li class="list-group-item">Item Deleted</li>
+                                        <% } %>
+                                        <% }) %>
+                                    </ul>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Update Order Status Modal -->
+                    <div class="modal fade" id="updateOrderStatusModal-<%= order._id %>" tabindex="-1" aria-labelledby="updateOrderStatusModalLabel-<%= order._id %>" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="updateOrderStatusModalLabel-<%= order._id %>">Update Order Status</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form action="/admin/orders/<%= order._id %>/update" method="POST">
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label for="status-<%= order._id %>" class="form-label">Order Status</label>
+                                            <select class="form-select" id="status-<%= order._id %>" name="status">
+                                                <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                                <option value="Completed" <%= order.status === 'Completed' ? 'selected' : '' %>>Completed</option>
+                                                <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="paymentStatus-<%= order._id %>" class="form-label">Payment Status</label>
+                                            <select class="form-select" id="paymentStatus-<%= order._id %>" name="paymentStatus">
+                                                <option value="Pending" <%= order.paymentStatus === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                                <option value="Completed" <%= order.paymentStatus === 'Completed' ? 'selected' : '' %>>Completed</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Update</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Update Payment Status Modal -->
+                    <div class="modal fade" id="updatePaymentStatusModal-<%= order._id %>" tabindex="-1" aria-labelledby="updatePaymentStatusModalLabel-<%= order._id %>" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="updatePaymentStatusModalLabel-<%= order._id %>">Update Payment Status</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form action="/admin/orders/<%= order._id %>/update" method="POST">
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label for="paymentStatus-<%= order._id %>" class="form-label">Payment Status</label>
+                                            <select class="form-select" id="paymentStatus-<%= order._id %>" name="paymentStatus">
+                                                <option value="Pending" <%= order.paymentStatus === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                                <option value="Completed" <%= order.paymentStatus === 'Completed' ? 'selected' : '' %>>Completed</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Update</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- View Reward Modal -->
+        <div class="modal fade" id="viewRewardModal" tabindex="-1" aria-labelledby="viewRewardModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="viewRewardModalLabel">Total Reward Points</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Total Reward Points: <span id="totalRewardPoints">0</span></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
